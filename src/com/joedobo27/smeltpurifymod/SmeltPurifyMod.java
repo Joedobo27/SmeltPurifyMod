@@ -21,12 +21,14 @@ import java.util.logging.Logger;
 public class SmeltPurifyMod implements WurmServerMod, ServerStartedListener, Configurable{
 
     private static final Logger logger = Logger.getLogger(SmeltPurifyMod.class.getName());
-    private static final String[] STEAM_VERSION = new String[]{"1.3.1.3"};
+    private static final String[] STEAM_VERSION = new String[]{"1.3.1.3", "1.3.5.5"};
     private static boolean versionCompliant = false;
     private static double minimumUnitActionTime;
+    static private double actionTimeExtension;
     static double qualityIncrease;
     static double weightSmelted;
     static double lightestResult;
+
 
     @Override
     public void configure(Properties properties) {
@@ -34,6 +36,8 @@ public class SmeltPurifyMod implements WurmServerMod, ServerStartedListener, Con
         weightSmelted = Double.parseDouble(properties.getProperty("weightSmelted", Double.toString(weightSmelted)));
         minimumUnitActionTime = Double.parseDouble(properties.getProperty("minimumUnitActionTime", Double.toString(minimumUnitActionTime)));
         lightestResult = Double.parseDouble(properties.getProperty("lightestResult", Double.toString(lightestResult)));
+        actionTimeExtension = Double.parseDouble(properties.getProperty("actionTimeExtension", Double.toString(actionTimeExtension)));
+
         if (Arrays.stream(STEAM_VERSION)
                 .filter(s -> Objects.equals(s, properties.getProperty("steamVersion", null)))
                 .count() > 0)
@@ -64,7 +68,7 @@ public class SmeltPurifyMod implements WurmServerMod, ServerStartedListener, Con
         double time;
         double modifiedKnowledge = Math.min(MAX_SKILL, performer.getSkills().getSkillOrLearn(SkillList.SMITHING_METALLURGY)
                 .getKnowledge(activeTool, 0));
-        time = Math.max(minimumUnitActionTime, (160.0 - modifiedKnowledge) * 1.3f / Servers.localServer.getActionTimer());
+        time = Math.max(minimumUnitActionTime, (130.0 + actionTimeExtension - modifiedKnowledge) * 1.3f / Servers.localServer.getActionTimer());
 
         // woa
         if (activeTool != null && activeTool.getSpellSpeedBonus() > 0.0f)

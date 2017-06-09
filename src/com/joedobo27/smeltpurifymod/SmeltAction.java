@@ -99,8 +99,8 @@ public class SmeltAction implements ModAction, BehaviourProvider, ActionPerforme
         }
         boolean lumpWeightInsufficient = lump.getWeightGrams() / (SmeltPurifyMod.weightSmelted * 1000) < SmeltPurifyMod.lightestResult;
         if (lumpWeightInsufficient) {
-            String errorMessage = String.format("The smelted lump would weigh less than %s kg which is too small.",
-                    String.format("%.2f", lump.getWeightGrams() / (SmeltPurifyMod.weightSmelted * 1000)));
+            String errorMessage = String.format("The smelted lump's weigh of %.2f kg would be less then the minimum of %.2f kg.",
+                    lump.getWeightGrams() / (SmeltPurifyMod.weightSmelted * 1000), SmeltPurifyMod.lightestResult);
             performer.getCommunicator().sendNormalServerMessage(errorMessage);
             return true;
         }
@@ -108,8 +108,9 @@ public class SmeltAction implements ModAction, BehaviourProvider, ActionPerforme
                 .getKnowledge(smeltPot, 0));
         boolean isNotSkilledEnough = modifiedKnowledge < (lump.getQualityLevel() + SmeltPurifyMod.qualityIncrease);
         if (isNotSkilledEnough) {
-            performer.getCommunicator().sendNormalServerMessage("You can't figure out how to smelt that given your skill and " +
-                    "the smelting pot used.");
+            performer.getCommunicator().sendNormalServerMessage(
+                    String.format("Smelting up to %.2f quality won't work. That smelting pot and your metallurgy skill will smelt up to %.2f quality.",
+                            lump.getQualityLevel() + SmeltPurifyMod.qualityIncrease, modifiedKnowledge));
             return true;
         }
         return false;
