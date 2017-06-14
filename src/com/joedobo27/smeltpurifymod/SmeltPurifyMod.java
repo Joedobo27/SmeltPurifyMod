@@ -12,19 +12,15 @@ import org.gotti.wurmunlimited.modloader.interfaces.ServerStartedListener;
 import org.gotti.wurmunlimited.modloader.interfaces.WurmServerMod;
 import org.gotti.wurmunlimited.modsupport.actions.ModActions;
 
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.Properties;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SmeltPurifyMod implements WurmServerMod, ServerStartedListener, Configurable{
 
     private static final Logger logger = Logger.getLogger(SmeltPurifyMod.class.getName());
-    private static final String[] STEAM_VERSION = new String[]{"1.3.1.3", "1.3.5.5"};
-    private static boolean versionCompliant = false;
     private static double minimumUnitActionTime;
-    static private double actionTimeExtension;
+    private static double actionTimeExtension;
+    static boolean scaleTimeWithWeight;
     static double qualityIncrease;
     static double weightSmelted;
     static double lightestResult;
@@ -37,20 +33,11 @@ public class SmeltPurifyMod implements WurmServerMod, ServerStartedListener, Con
         minimumUnitActionTime = Double.parseDouble(properties.getProperty("minimumUnitActionTime", Double.toString(minimumUnitActionTime)));
         lightestResult = Double.parseDouble(properties.getProperty("lightestResult", Double.toString(lightestResult)));
         actionTimeExtension = Double.parseDouble(properties.getProperty("actionTimeExtension", Double.toString(actionTimeExtension)));
-
-        if (Arrays.stream(STEAM_VERSION)
-                .filter(s -> Objects.equals(s, properties.getProperty("steamVersion", null)))
-                .count() > 0)
-            versionCompliant = true;
-        else
-            logger.log(Level.WARNING, "WU version mismatch. Your " + properties.getProperty(" steamVersion", null)
-                    + "version doesn't match one of SmeltPurifyMod's required versions " + Arrays.toString(STEAM_VERSION));
+        scaleTimeWithWeight = Boolean.parseBoolean(properties.getProperty("scaleTimeWithWeight", Boolean.toString(scaleTimeWithWeight)));
     }
 
     @Override
     public void onServerStarted() {
-        if (!versionCompliant)
-            return;
         ModActions.registerAction(new SmeltAction());
     }
 

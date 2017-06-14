@@ -61,6 +61,9 @@ public class SmeltAction implements ModAction, BehaviourProvider, ActionPerforme
                 performer.getCommunicator().sendNormalServerMessage(youMessage);
                 Server.getInstance().broadCastAction(broadcastMessage, performer, 5);
                 int time = (int) SmeltPurifyMod.getBaseUnitActionTime(smeltPot, performer, action);
+                if (SmeltPurifyMod.scaleTimeWithWeight) {
+                    time = scaleTimeProportionalWeight(time, lump);
+                }
                 action.setTimeLeft(time);
                 performer.sendActionControl(action.getActionEntry().getVerbString(), true, time);
                 performer.getStatus().modifyStamina(-1000.0f);
@@ -82,6 +85,12 @@ public class SmeltAction implements ModAction, BehaviourProvider, ActionPerforme
             return false;
         }
         return ActionPerformer.super.action(action, performer, smeltPot, lump, aActionId, counter);
+    }
+
+    static private int scaleTimeProportionalWeight(int time, Item lump) {
+        int unitWeight = lump.getTemplate().getWeightGrams();
+        double unitCount = lump.getWeightGrams() / unitWeight;
+        return (int) (time * unitCount);
     }
 
     static private boolean hasAFailureCondition(Action action, Creature performer, Item smeltPot, Item lump, short aActionId) {
