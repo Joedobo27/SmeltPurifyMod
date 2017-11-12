@@ -8,7 +8,7 @@ Ago's WurmServerModLauncher. https://github.com/ago1024/WurmServerModLauncher/re
 Get one of the archive releases and unpack it into the mods folder. The folder path should look something like this:
 ~Steam\SteamApps\common\Wurm Unlimited Dedicated Server\mods
 
-:Mod's forum post:
+:Mod's forum post:https://forum.wurmonline.com/index.php?/topic/154522-released-smelt-purify-mod/
 
 
 :Disclaimer:
