@@ -1,4 +1,4 @@
-package com.joedobo27.smeltpurifymod;
+package com.joedobo27.spm;
 
 
 import javax.json.Json;
@@ -13,9 +13,7 @@ class ConfigureOptions {
 
     private double qualityIncrease;
     private double weightSmelted;
-    private double lightestResult;
     private ActionOptions smeltAction;
-    private boolean scaleTimeWithWeight;
 
     private static final ConfigureOptions instance;
     private static final String DEFAULT_ACTION_OPTION = "" +
@@ -64,9 +62,7 @@ class ConfigureOptions {
     synchronized static void setOptions(Properties properties) {
         instance.qualityIncrease = Double.parseDouble(properties.getProperty("qualityIncrease"));
         instance.weightSmelted = Double.parseDouble(properties.getProperty("weightSmelted"));
-        instance.lightestResult = Double.parseDouble(properties.getProperty("lightestResult"));
         instance.smeltAction = doPropertiesToActionOptions(properties.getProperty("smeltAction"));
-        instance.scaleTimeWithWeight = Boolean.parseBoolean(properties.getProperty("scaleTimeWithWeight"));
     }
 
     synchronized static void resetOptions() {
@@ -75,9 +71,7 @@ class ConfigureOptions {
             throw new RuntimeException("properties can't be null here.");
         instance.qualityIncrease = Double.parseDouble(properties.getProperty("qualityIncrease"));
         instance.weightSmelted = Double.parseDouble(properties.getProperty("weightSmelted"));
-        instance.lightestResult = Double.parseDouble(properties.getProperty("lightestResult"));
         instance.smeltAction = doPropertiesToActionOptions(properties.getProperty("smeltAction"));
-        instance.scaleTimeWithWeight = Boolean.parseBoolean(properties.getProperty("scaleTimeWithWeight"));
     }
 
     private static ArrayList<Integer> doPropertiesToArray(String values) {
@@ -117,23 +111,15 @@ class ConfigureOptions {
         return instance;
     }
 
-    public double getQualityIncrease() {
+    double getQualityIncrease() {
         return qualityIncrease;
     }
 
-    public double getWeightSmelted() {
+    double getWeightSmeltedRatio() {
         return weightSmelted;
     }
 
-    public double getLightestResult() {
-        return lightestResult;
-    }
-
-    public ActionOptions getSmeltAction() {
+    ActionOptions getSmeltAction() {
         return smeltAction;
-    }
-
-    public boolean isScaleTimeWithWeight() {
-        return scaleTimeWithWeight;
     }
 }

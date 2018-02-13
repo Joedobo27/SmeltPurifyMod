@@ -1,13 +1,7 @@
-package com.joedobo27.smeltpurifymod;
+package com.joedobo27.spm;
 
 
-import com.wurmonline.server.Servers;
-import com.wurmonline.server.behaviours.Action;
 import com.wurmonline.server.creatures.Communicator;
-import com.wurmonline.server.creatures.Creature;
-import com.wurmonline.server.items.Item;
-import com.wurmonline.server.items.RuneUtilities;
-import com.wurmonline.server.skills.SkillList;
 import org.gotti.wurmunlimited.modloader.interfaces.*;
 import org.gotti.wurmunlimited.modsupport.actions.ModActions;
 

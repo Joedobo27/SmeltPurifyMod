@@ -1,12 +1,11 @@
-package com.joedobo27.smeltpurifymod;
+package com.joedobo27.spm;
 
-import com.wurmonline.server.Server;
+
 import com.wurmonline.server.behaviours.Action;
 import com.wurmonline.server.behaviours.ActionEntry;
 import com.wurmonline.server.behaviours.Actions;
 import com.wurmonline.server.creatures.Creature;
 import com.wurmonline.server.items.Item;
-import com.wurmonline.server.skills.Skill;
 import com.wurmonline.server.skills.SkillList;
 import org.gotti.wurmunlimited.modsupport.actions.ActionPerformer;
 import org.gotti.wurmunlimited.modsupport.actions.ModAction;
@@ -36,10 +35,6 @@ public class SmeltActionPerformer implements ModAction, ActionPerformer {
         return actionId;
     }
 
-    ActionEntry getActionEntry() {
-        return actionEntry;
-    }
-
     @Override
     public boolean action(Action action, Creature performer, Item active, Item target, short aActionId, float counter) {
 
@@ -56,35 +51,31 @@ public class SmeltActionPerformer implements ModAction, ActionPerformer {
 
         if (smeltAction.isActionStartTime(counter)) {
             smeltAction.doActionStartMessages();
-            smeltAction.setInitialTime(Actions.actionEntrys[Actions.HARVEST]);
+            smeltAction.setInitialTime(this.actionEntry);
             active.setDamage(active.getDamage() + 0.0015f * active.getDamageModifier());
             performer.getStatus().modifyStamina(-1000.0f);
             return propagate(action, CONTINUE_ACTION, NO_SERVER_PROPAGATION, NO_ACTION_PERFORMER_PROPAGATION);
         }
 
-        if (!smeltAction.isActionTimedOut(action, counter)) {
+
+        if (!smeltAction.unitTimeIncremented())
             return propagate(action, CONTINUE_ACTION, NO_SERVER_PROPAGATION, NO_ACTION_PERFORMER_PROPAGATION);
+        performer.getStatus().modifyStamina(-10000.0f);
+        if (smeltAction.isActionTimedOut(action, counter)) {
+            smeltAction.doSkillCheckAndGetPower();
+            smeltAction.modifyLump();
+            smeltAction.doActionEndMessages();
+            return true;
         }
         if (smeltAction.hasAFailureCondition())
             return propagate(action, FINISH_ACTION, NO_SERVER_PROPAGATION, NO_ACTION_PERFORMER_PROPAGATION);
 
-        Skill metallurgy = performer.getSkills().getSkillOrLearn(SkillList.SMITHING_METALLURGY);
-        metallurgy.skillCheck(target.getTemplate().getDifficulty(), 0, false, counter);
-        target.setWeight((int)(target.getWeightGrams() / (SmeltPurifyMod.weightSmelted * 1000) * 1000), true);
-        target.setQualityLevel((int)(target.getQualityLevel() + SmeltPurifyMod.qualityIncrease));
-        active.setDamage(active.getDamage() + active.getDamageModifier() * 0.002f);
-        performer.getStatus().modifyStamina(-10000.0f);
-        youMessage = String.format("You finish %s.", action.getActionString());
-        performer.getCommunicator().sendNormalServerMessage(youMessage);
-        broadcastMessage = String.format("%s finishes %s.", performer.getName(), action.getActionString());
-        Server.getInstance().broadCastAction(broadcastMessage, performer, 5);
-        return true;
-    }
+        smeltAction.doSkillCheckAndGetPower();
 
-    static private int scaleTimeProportionalWeight(int time, Item lump) {
-        int unitWeight = lump.getTemplate().getWeightGrams();
-        double unitCount = lump.getWeightGrams() / unitWeight;
-        return (int) (time * unitCount);
+        smeltAction.modifyLump();
+
+        active.setDamage(active.getDamage() + active.getDamageModifier() * 0.002f);
+        return propagate(action, CONTINUE_ACTION, NO_SERVER_PROPAGATION, NO_ACTION_PERFORMER_PROPAGATION);
     }
 
     static SmeltActionPerformer getSmeltActionPerformer() {
