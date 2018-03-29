@@ -18,7 +18,7 @@ public class SmeltActionPerformer implements ModAction, ActionPerformer {
     private final short actionId;
     private final ActionEntry actionEntry;
 
-    SmeltActionPerformer(short actionId, ActionEntry actionEntry) {
+    private SmeltActionPerformer(short actionId, ActionEntry actionEntry) {
         this.actionId = actionId;
         this.actionEntry = actionEntry;
     }

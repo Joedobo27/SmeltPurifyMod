@@ -147,10 +147,9 @@ public class SmeltAction extends ActionMaster {
             time = Math.max(this.shortestTime, time * (1 - (this.action.getRarity() * ACTION_RARITY_EFFECT)));
 
         if (this.activeTool != null && this.activeTool.getSpellEffects() != null &&
-                this.activeTool.getSpellEffects().getRuneEffect() != -10L)
+                this.activeTool.getSpellEffects().getRuneEffect(RuneUtilities.ModifierEffect.ENCH_USESPEED) != -10L)
             time = Math.max(this.shortestTime, time * (1 -
-                    RuneUtilities.getModifier(this.activeTool.getSpellEffects().getRuneEffect(),
-                            RuneUtilities.ModifierEffect.ENCH_USESPEED)));
+                    this.activeTool.getSpellEffects().getRuneEffect(RuneUtilities.ModifierEffect.ENCH_USESPEED)));
 
         int timeInt = (int)time;
         double combinedUnits = this.targetItem.getWeightGrams() / this.targetItem.getTemplate().getWeightGrams();
@@ -185,6 +184,10 @@ public class SmeltAction extends ActionMaster {
     }
 
     void modifyLump() {
+        if (this.targetItem.getDamage() > 0F){
+            this.targetItem.setQualityLevel(this.targetItem.getQualityLevel() * (1 - (this.targetItem.getDamage() / 100)));
+            this.targetItem.setDamage(0F);
+        }
         int totalWeightSmeltedGrams = (int)(this.initialGrams - (this.initialGrams / ConfigureOptions.getInstance().getWeightSmeltedRatio()));
         float qualityIncrease = (float)ConfigureOptions.getInstance().getQualityIncrease();
         int fractionalGramsChange = totalWeightSmeltedGrams / this.lumpUnitTotal;
